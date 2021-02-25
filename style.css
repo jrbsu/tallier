@@ -29,11 +29,12 @@ time, mark, audio, video {
 	padding: 0;
 }
 textarea {
-    width: 90%;
+    width: 100%;
+    font-family: monospace;
 }
 
 #container {
-    margin: 1em;
+    margin-top: 1em;
     font-family: sans-serif;
 }
 
