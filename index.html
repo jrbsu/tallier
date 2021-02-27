@@ -11,12 +11,26 @@
 </head>
 <body>
     <div class="container-fluid" id="container">
-        <textarea id="dump-box" placeholder="paste dump here"></textarea>
-        Expected successful candidates: <input type=number id="candidates" class="form-control-sm" value="7" min="1" max="15" data-digit-grouping="false"/>
-        <button id="tally-button">Tally</button>
-        <div id="output">
-            <div class="holder" id="candidate-list"></div>
-            <div class="holder" id="votes-list"></div>
+        <div class="container-fluid">
+            <textarea id="dump-box" placeholder="paste dump here"></textarea>
+        </div>
+        <div class="container-fluid">
+            Expected successful candidates: <input type=number id="candidates" class="form-control-sm" value="7" min="0" max="15" data-digit-grouping="false"/>
+        </div>
+        <div class="container-fluid">
+            Vote language code: <input type=text id="lang" class="form-control-sm" value="uk"/>
+        </div>
+        <div class="container-fluid">
+            <input type="checkbox" id="must-vote" name="must-vote" checked> <label for="must-vote">Must vote for exact number of candidates?</label>
+        </div>
+        <div class="container-fluid">
+            <button id="tally-button">Tally</button>
+        </div>
+        <div class="container-fluid">
+            <div id="output">
+                <div class="holder" id="candidate-list"></div>
+                <div class="holder" id="votes-list"></div>
+            </div>
         </div>
     </div>
     <script src="src/jquery-3.2.1.slim.min.js"></script>
