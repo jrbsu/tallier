@@ -24,11 +24,13 @@
             <input type="checkbox" id="must-vote" name="must-vote" checked> <label for="must-vote">Must vote for exact number of candidates?</label>
         </div>
         <div class="container-fluid">
-            <button id="tally-button">Tally</button>
+            <button id="get-candidates-button">Get candidates</button>
+            <button id="tally-button" disabled=true>Tally</button>
         </div>
         <div class="container-fluid">
             <div id="output">
                 <div class="holder" id="candidate-list"></div>
+                <div class="holder" id="results-list"></div>
                 <div class="holder" id="votes-list"></div>
             </div>
         </div>

@@ -45,8 +45,9 @@ input {
 }
 
 .holder {
-    padding: 1em 0;
+    padding: 1em;
 }
+
 
 .eligible {
     color: #390;
@@ -62,4 +63,12 @@ input {
 
 #candidate-list li {
     margin: 0 0 0.2em 2em;
+}
+
+#tally-button {
+    margin: 1em 0;
+}
+
+li {
+    margin-bottom: 0.5em;
 }
