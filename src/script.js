@@ -108,16 +108,15 @@ $(document).ready(function () {
                     .replace(lang, "")
                     .replace(/<\/message>/g, "");
                 candidates.push(trimHold);
-            } else if (this.match(voteStart)) {
+            } else if (this.match("Q000")) {
                 trimHold = dumpLines[index]
                     .replace(/<vote>/g, "")
-                    .replace(/Q.{20}\+0{9}/g, "")
+                    .replace(/Q.{20}\+0{9}/g, "");
                 votes.push(trimHold);
             }
         });
         $(votes).each(function(index) {
             var j = votes[index].split(/--/).slice(0, -1);
-            console.log(j);
             $(j).each(function(index) {
                 j[index] = parseInt(j[index]); // forcing the votes to be numbers and not strings. thanks javascript!
             });
