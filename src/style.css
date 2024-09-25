@@ -1,4 +1,4 @@
-/* General page styling */
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f9f9f4;
@@ -15,7 +15,6 @@ body {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Text area styling */
 #dump-box {
     width: 100%;
     height: 150px;
@@ -28,47 +27,79 @@ body {
     background-color: #f9f9f9;
 }
 
-/* Input fields styling */
 input[type="number"],
 input[type="text"],
 select {
     width: 100%;
     padding: 8px;
-    margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
     background-color: #f9f9f9;
-}
-
-/* Checkbox styling */
-input[type="checkbox"] {
-    margin-right: 5px;
     display: inline-block;
 }
 
-/* Align checkbox label */
-label[for="must-vote"] {
+label {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.form-group label {
+    flex: 1;
+    max-width: 180px;
+}
+
+.form-group input, .form-group select {
+    flex: 2;
+    min-width: 150px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+input[type="checkbox"] {
+    margin-left: 10px;
     display: inline-block;
     vertical-align: middle;
 }
 
-/* Labels styling */
-label {
-    font-weight: bold;
-    margin: 5px 0;
-    display: block;
+.checkbox-container label {
+    margin-left: 5px;
 }
 
-/* Button styling */
 button {
-    background-color: #0C57A8; /* Blue */
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.form-group > * {
+    flex: 1;
+    margin-right: 15px;
+}
+
+button {
+    background-color: #0C57A8;
     color: white;
     border: none;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
     margin-right: 10px;
+    margin-top: 10px;
+    display: inline-block;
     border-radius: 4px;
     transition: background-color 0.3s ease;
 }
@@ -82,29 +113,25 @@ button[disabled] {
     cursor: not-allowed;
 }
 
-/* Styling for the output sections, hidden by default */
 #output .holder {
     margin-top: 20px;
     padding: 15px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     border-radius: 5px;
-    display: none; /* Hide the divs initially */
+    display: none;
 }
 
-/* Success (valid) vote styling */
 .success {
     color: green;
     font-weight: bold;
 }
 
-/* Ineligible (invalid) vote styling */
 .ineligible {
     color: red;
     font-weight: bold;
 }
 
-/* Styling for ordered lists */
 ol {
     padding-left: 20px;
 }
@@ -113,7 +140,6 @@ ol li {
     margin: 5px 0;
 }
 
-/* Responsive design for mobile */
 @media (max-width: 600px) {
     .container-fluid {
         padding: 10px;
@@ -129,27 +155,24 @@ ol li {
     }
 }
 
-/* Styling the labels */
 label {
     margin-left: 10px;
     font-size: 16px;
     cursor: pointer;
 }
 
-/* General table styling */
 table {
     width: 100%;
-    border-collapse: collapse; /* Remove the default space between table cells */
+    border-collapse: collapse;
     margin-bottom: 20px;
     background-color: #ffffff;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Add a light shadow around the table */
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    overflow: hidden; /* Apply border radius to the entire table */
+    overflow: hidden;
 }
 
-/* Table headers */
 table th {
-    background-color: #0C57A8; /* Blue background for the header */
+    background-color: #0C57A8;
     color: white;
     text-align: left;
     padding: 10px;
@@ -157,28 +180,24 @@ table th {
     font-size: 16px;
 }
 
-/* Table data cells */
 table td {
     padding: 10px;
-    border-bottom: 1px solid #ddd; /* Light grey border for rows */
+    border-bottom: 1px solid #ddd;
     font-size: 14px;
-    color: #333; /* Dark grey text for readability */
+    color: #333;
 }
 
-/* Alternating row colors */
 table tr:nth-child(even) {
-    background-color: #f9f9f9; /* Light grey background for even rows */
+    background-color: #f9f9f9;
 }
 
-/* Hover effect for rows */
 table tr:hover {
-    background-color: #f1f1f1; /* Slightly darker grey when hovering */
+    background-color: #f1f1f1;
 }
 
-/* Responsive table design for smaller screens */
 @media (max-width: 600px) {
     table, thead, tbody, th, td, tr {
-        display: block; /* Stack table rows on smaller screens */
+        display: block;
     }
 
     table tr {
@@ -186,23 +205,23 @@ table tr:hover {
     }
 
     table td, table th {
-        width: 100%; /* Ensure table data and headers fill the container width */
+        width: 100%;
         box-sizing: border-box;
     }
 
     table th {
         position: relative;
-        padding-left: 15px; /* Provide space for labeling */
+        padding-left: 15px;
     }
 
     table td {
         padding-left: 15px;
-        border: none; /* Remove borders for compact display */
+        border: none;
         position: relative;
     }
 
     table td::before {
-        content: attr(data-label); /* Use data-label attribute to simulate header labels */
+        content: attr(data-label);
         position: absolute;
         left: 0;
         top: 0;

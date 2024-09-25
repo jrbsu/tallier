@@ -22,21 +22,29 @@
             <textarea id="dump-box" placeholder="paste dump here"></textarea>
         </div>
         <div class="container-fluid">
-            <label for="candidates" id="candidates-label">Expected successful candidates: </label>
-            <input type=number id="candidates" class="form-control-sm" value="7" min="0" max="15" data-digit-grouping="false"/>
+            <div class="form-group">
+                <div class="form-item">
+                    <label for="candidates" id="candidates-label">Expected successful candidates: </label>
+                    <input type="number" id="candidates" class="form-control-sm" value="7" min="0" max="15" data-digit-grouping="false"/>
+                </div>
+        
+                <div class="form-item">
+                    <label for="lang" id="lang-label">Vote language code: </label>
+                    <input type="text" id="lang" class="form-control-sm" value="uk"/>
+                </div>
+        
+                <div class="form-item">
+                    <input type="checkbox" id="must-vote" name="must-vote" checked>
+                    <label for="must-vote" id="must-vote-label">Voters must vote for exact number of candidates?</label>
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <button id="get-candidates-button">Get candidates</button>
+                <button id="tally-button" disabled>Tally</button>
+            </div>
         </div>
-        <div class="container-fluid">
-            <label for="lang" id="lang-label">Vote language code: </label>
-            <input type=text id="lang" class="form-control-sm" value="uk"/>
-        </div>
-        <div class="container-fluid">
-            <input type="checkbox" id="must-vote" name="must-vote" checked> 
-            <label for="must-vote" id="must-vote-label">Voters must vote for exact number of candidates?</label>
-        </div>
-        <div class="container-fluid">
-            <button id="get-candidates-button">Get candidates</button>
-            <button id="tally-button" disabled=true>Tally</button>
-        </div>
+        
         <div class="container-fluid">
             <div id="output">
                 <div class="holder" id="candidate-list"></div>

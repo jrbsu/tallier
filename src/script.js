@@ -178,21 +178,42 @@ $(document).ready(function () {
         $('#results-list').html("");
         $('#candidate-list').html("");
         $('#votes-list').html("");
-
-        candidateAmount = parseInt($('#candidates').val()); // Global candidateAmount
+    
+        const candidateAmountInput = $('#candidates').val(); // Get the candidate amount value
+        const dumpBoxInput = $('#dump-box').val(); // Get the dump box value
+        
+        // Get selected language from the dropdown
+        const lang = document.getElementById("language-toggle").value;
+        console.log("Selected language:", lang); // Debugging the selected language
+    
+        if (candidateAmountInput === "" || dumpBoxInput === "") {
+            alert(translations[lang].requiredFieldsError || "Please ensure all required fields are filled.");
+            console.error("Error: Input fields cannot be blank."); // Log error for debugging
+            return; // Exit the function if inputs are invalid
+        }
+    
+        candidateAmount = parseInt(candidateAmountInput); // Convert candidate amount to integer
         console.log("Candidate amount set to:", candidateAmount); // Debug: Candidate amount
-
+    
         if (!(candidateAmount > 0)) {
-            alert("Enter a candidate number please!");
+            alert(translations[lang].candidateNumberError || "Please enter a valid number of candidates.");
             return;
         }
-
+    
         extractCandidatesVotes(); // Extract votes and candidates
+    
+        // Check if at least one candidate was found
+        if (candidates.length === 0) {
+            alert(translations[lang].malformedDumpError);
+            console.error("Error: No candidates found. Possible malformed dump.");
+            return;
+        }
+    
         displayCandidateList(); // Display candidates for selection
         showHolderDiv('candidate-list');
         hideHolderDiv('votes-list');
         hideHolderDiv('results-list');
-    });
+    });    
 
     // Event handler for tallying votes
     $('#tally-button').click(function () {
@@ -222,7 +243,10 @@ const translations = {
         voterEligible: "✅ Voter {0} voted for {1} candidates.",
         voterIneligibleCount: "❌ Voter {0} voted for {1} candidates, so their vote was not counted.",
         voterIneligibleCandidate: "❌ Voter {0} voted for a prohibited candidate ({2}), so their vote was not counted.",
-        revoteNeeded: "<b>Looks like a revote is needed.</b> {0} ({1}th place) and {2} ({3}th place) both have {4} votes."
+        revoteNeeded: "<b>Looks like a revote is needed.</b> {0} ({1}th place) and {2} ({3}th place) both have {4} votes.",
+        candidateNumberError: "Please enter a number of candidates.",
+        requiredFieldsError: "Please ensure all required fields are filled.",
+        malformedDumpError: "No candidates found. The dump may be malformed."
     },
     uk: {
         candidatesLabel: "Очікувана кількість успішних кандидатів",
@@ -235,7 +259,10 @@ const translations = {
         voterEligible: "✅ Виборець {0} проголосував за {1} кандидата(ів).",
         voterIneligibleCount: "❌ Виборець {0} проголосував за {1} кандидата(ів), тому його голос не був зарахований.",
         voterIneligibleCandidate: "❌ Виборець {0} проголосував за забороненого кандидата ({2}), тому його голос не був зарахований.",
-        revoteNeeded: "<b>Потрібне повторне голосування.</b> {0} ({1} місце) і {2} ({3} місце) мають однакову кількість голосів ({4} голосів)."
+        revoteNeeded: "<b>Потрібне повторне голосування.</b> {0} ({1} місце) і {2} ({3} місце) мають однакову кількість голосів ({4} голосів).",
+        candidateNumberError: "Будь ласка, введіть кількість кандидатів.",
+        requiredFieldsError: "Будь ласка, переконайтеся, що всі обов'язкові поля заповнені.",
+        malformedDumpError: "Кандидати не знайдені. Можливо, дамп пошкоджений."
     }
 };
 
