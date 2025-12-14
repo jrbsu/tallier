@@ -30,54 +30,104 @@ $(document).ready(function () {
 
     // Function to extract candidates and votes from the input text
     function extractCandidatesVotes() {
-        let dumptext = $('#dump-box').val();
-        console.log("Dumptext content:", dumptext); // Debug: Output the dumptext
-        let lang_regex = new RegExp(`<message.*lang="${$('#lang').val()}">`);
-        console.log("Language regex:", lang_regex); // Debug: Show language regex
+        const dumptext = $('#dump-box').val();
+        const wantedLang = ($('#lang').val() || '').trim();
 
-        dumptext = dumptext.replace(/<SecurePoll.[\s\S]*?(?=\n.*?(<option)|$)/g, "");
-        const dumpLines = dumptext.splitNewline();
-        console.log("Dump lines split by newlines:", dumpLines); // Debug: Show lines split
+        // reset (important if user clicks multiple times)
+        candidates = [];
+        votes = [];
+        voters = [];
 
-        let capturingVote = false; // Flag to track when we are capturing votes
-        let currentVote = ''; // To accumulate the vote data across multiple lines
+        // --- Parse XML safely ---
+        const xmlDoc = new DOMParser().parseFromString(dumptext, "text/xml");
+        const parseErr = xmlDoc.querySelector("parsererror");
+        if (parseErr) {
+            console.error("XML parse error:", parseErr.textContent);
+            throw new Error("Could not parse XML dump (parsererror).");
+        }
 
-        dumpLines.forEach(line => {
-            if (line.match(lang_regex)) {
-                // Extract candidate names
-                const candidateName = line.replace(lang_regex, "").replace(/<\/message>/g, "");
-                candidates.push(candidateName);
-                console.log("Candidate extracted:", candidateName); // Debug: Show extracted candidate
-            } else if (line.match(voteStart)) {
-                // Start capturing the vote on subsequent lines
-                capturingVote = true;
-                currentVote = ''; // Reset the current vote
-                console.log("Vote tag detected. Capturing vote data..."); // Debug: Vote tag found
-            } else if (capturingVote) {
-                // Continue capturing vote data across lines until the end of the vote block
-                currentVote += line.trim(); // Append the vote data from the next line
-                if (line.includes('</vote>')) {
-                    // When we encounter the closing vote tag, process the vote
-                    capturingVote = false;
-                    currentVote = currentVote.replace(/<\/vote>/g, ''); // Clean up the closing tag
-                    const vote = currentVote
-                        .split('--')
-                        .slice(0, -1)  // Remove the last empty element after the split
-                        .map(segment => {
-                            const match = segment.match(/S\+(\d{10})/);
-                            const voteValue = match ? (match[1] === '0000000001' ? 1 : 0) : 0;
-                            console.log("Processed vote segment:", segment, "Vote value:", voteValue); // Debug: Show vote segment
-                            return voteValue;
-                        });
-                    votes.push(vote); // Push the processed votes to the array
-                    console.log("Vote extracted:", vote); // Debug: Show the whole extracted vote
-                }
+        // Pick the first <question>. (If you later support multiple questions, select by id.)
+        const questionEl = xmlDoc.querySelector("question");
+        if (!questionEl) throw new Error("No <question> found in dump.");
+
+        const optionEls = Array.from(questionEl.querySelectorAll("option"));
+        if (optionEls.length === 0) throw new Error("No <option> found in first <question>.");
+
+        // Map SecurePoll answer token -> candidate index
+        // In your example: option <id>1900</id> corresponds to A0000076C because 1900(dec)=0x76C
+        const answerToIndex = new Map();
+
+        function optionIdToAnswerToken(optIdDec) {
+            const hex = Number(optIdDec).toString(16).toUpperCase().padStart(8, '0');
+            return `A${hex}`;
+        }
+
+        function getOptionLabel(optEl) {
+            // Prefer exact lang match, else fall back to any message[name="text"]
+            const byLang = optEl.querySelector(`message[name="text"][lang="${wantedLang}"]`);
+            const any = optEl.querySelector(`message[name="text"]`);
+            const msg = byLang || any;
+            return (msg ? msg.textContent : "").trim();
+        }
+
+        optionEls.forEach((optEl, idx) => {
+            const idEl = optEl.querySelector("id");
+            const optId = idEl ? parseInt(idEl.textContent.trim(), 10) : NaN;
+
+            const label = getOptionLabel(optEl) || `Option ${idx + 1}`;
+            candidates.push(label);
+
+            if (!Number.isNaN(optId)) {
+                answerToIndex.set(optionIdToAnswerToken(optId), idx);
             }
         });
 
-        console.log("Final candidates list:", candidates); // Debug: Final candidates list
-        console.log("Final votes list:", votes); // Debug: Final votes list
-        voters = votes; // Store processed votes into voters
+        // --- Votes ---
+        const voteEls = Array.from(xmlDoc.querySelectorAll("vote"));
+        voteEls.forEach((vEl) => {
+            let t = (vEl.textContent || "").trim();
+            if (!t) return;
+
+            // New format: {"vote":"...--"}  (entities like &quot; are decoded by XML parser already)
+            let voteStr = "";
+            if (t.startsWith("{")) {
+                try {
+                    const obj = JSON.parse(t);
+                    voteStr = obj.vote || "";
+                } catch (e) {
+                    console.error("Failed to JSON.parse <vote> payload:", t, e);
+                    return;
+                }
+            } else {
+                // Fallback (older dumps or unexpected formats)
+                voteStr = t;
+            }
+
+            if (!voteStr) return;
+
+            const ballot = Array(candidates.length).fill(0);
+
+            // Split on "--" and ignore empty tail from the trailing "--"
+            voteStr.split("--").filter(Boolean).forEach((seg) => {
+                // segment looks like: Q0000076B-A0000076C-S+0000000001
+                const m = seg.match(/A([0-9A-F]{8})-S\+(\d{10})/i);
+                if (!m) return;
+
+                const answerToken = `A${m[1].toUpperCase()}`;
+                const idx = answerToIndex.get(answerToken);
+                if (idx === undefined) return;
+
+                const score = parseInt(m[2], 10);
+                ballot[idx] = score > 0 ? 1 : 0; // treat any non-zero score as "support"
+            });
+
+            votes.push(ballot);
+        });
+
+        voters = votes;
+
+        console.log("Candidates:", candidates);
+        console.log("Votes parsed:", votes.length, votes);
     }
 
     // Function to display the candidate list with ineligibility checkboxes
